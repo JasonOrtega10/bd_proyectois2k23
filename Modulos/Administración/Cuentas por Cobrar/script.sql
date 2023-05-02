@@ -13,24 +13,19 @@ CREATE TABLE if not exists `tbl_TipoPago` (
 	nombre_tipopago VARCHAR(50) not null,
 	estado_tipopago tinyint not null
 );
-CREATE TABLE if not exists `tbl_Mora` (
-	pk_id_mora INT PRIMARY KEY auto_increment,
-	mes_min_mora FLOAT not null,
-	mes_max_mora FLOAT not null,
-	cantidad_fija_mora FLOAT not null,
-	cantidad_porcentaje_mora FLOAT not null,
-	estado_tipopago tinyint not null
-);
 CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
-  id INT PRIMARY KEY auto_increment,
-  fk_id_factura INT not null,
+  fk_id_factura INT not null primary key,
+  fk_id_almacen INT not null key,
   fk_id_tipoPago INT not null,
   fk_id_moneda INT not null,
-  fk_id_mora INT not null,
-  fecha_pago DATE not null,
-  abonado_pago float not null,
+  fecha_emision_cxc DATE not null,
+  fecha_pago_cxc DATE default null,
+  cambio_moneda_pago_cxc float not null default 0,
+  monto_cobro_cxc float not null default 0,
+  monto_pago_cxc float not null default 0,
+  estado_cxc tinyint default 0,
   -- FOREIGN KEY (fk_id_factura) REFERENCES EncabezadoFactura(id_encabezado),
+  -- FOREIGN KEY (fk_id_almacen) REFERENCES tbl_Almacen(pk_id_almacen),
   FOREIGN KEY (fk_id_tipoPago) REFERENCES tbl_TipoPago(pk_id_tipopago),
-  FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
-  FOREIGN KEY (fk_id_mora) REFERENCES tbl_Mora(pk_id_mora)
+  FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda)
 );
