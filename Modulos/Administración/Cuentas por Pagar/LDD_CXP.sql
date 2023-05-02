@@ -9,6 +9,12 @@ direccion_proveedor varchar(50) not null,
 telefono_proveedor int not null,
 correo_proveedor varchar(50) not null,
 rubro_proveedor varchar(100) not null,
+saldo_mes_anterior_balanceproveedores FLOAT DEFAULT 0,
+saldo_actual_proveedor FLOAT, 
+cargo_del_mes_proveedor FLOAT, 
+abonos_del_mes_proveedor FLOAT,  
+cargos_acumulados_proveedor FLOAT,
+abonos_acumulados_proveedors FLOAT,
 estado_proveedor tinyint not null default 0,
 primary key(pk_id_proveedor)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -34,18 +40,6 @@ tipoconcepto_conceptocuentaporpagar varchar(15) not null,
 estado_conceptocuentaporpagar tinyint default 0 not null,
 primary key(pk_id_conceptocuentaporpagar)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE if not exists `tbl_BalanceProveedores` (
-	fk_id_proveedor INT ,   
-    saldo_mes_anterior_balanceproveedores FLOAT DEFAULT 0,
-    saldo_actual_balanceproveedores FLOAT, 
-    cargo_del_mes_balanceproveedores FLOAT, 
-    abonos_del_mes_balanceproveedores FLOAT,  
-    cargos_acumulados_balanceproveedores FLOAT,
-    abonos_acumulados_balanceproveedores FLOAT,
-    FOREIGN KEY (fk_id_proveedor) REFERENCES tbl_Proveedor(pk_id_proveedor)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 /*CREATE TABLE if not exists `factura` (
   `id_factura` int NOT NULL AUTO_INCREMENT,
