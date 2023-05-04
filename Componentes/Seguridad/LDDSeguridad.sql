@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS `tbl_usuarios` (
   username_usuario VARCHAR(20) NOT NULL,
   password_usuario VARCHAR(100) NOT NULL,
   email_usuario VARCHAR(50) NOT NULL,
-  ultima_conexion_usuario DATETIME NULL DEFAULT NULL,
   estado_usuario TINYINT DEFAULT 0 NOT NULL,
   pregunta varchar(50) not null,
   respuesta varchar(50) not null,
@@ -161,9 +160,3 @@ VIEW `colchoneria`.`vista_perfil_usuario` AS
         ((`colchoneria`.`tbl_asignacionesperfilsusuario` `b`
         JOIN `colchoneria`.`tbl_usuarios` `a` ON ((`a`.`pk_id_usuario` = `b`.`fk_id_usuario`)))
         JOIN `colchoneria`.`tbl_perfiles` `c` ON ((`c`.`pk_id_perfil` = `b`.`fk_id_perfil`)));
-        
-
-
-
-
-
