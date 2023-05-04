@@ -57,13 +57,19 @@ primary key(id_factura)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE if not exists `tbl_CuentaPorPagar`(
-  pk_id_cuentaporpagar INT PRIMARY KEY,
+  pk_id_cuentaporpagar Int PRIMARY KEY,
+ -- fk_id_almacen INT not null PRIMARY KEY,
   fk_id_tipopago INT not null,
   fk_id_moneda INT not null,
   fk_id_factura INT not null,
   fk_id_conceptocuentaporpagar INT not null,
+  id_proveedor_cuentaporpagar INT not null,
+  cambio_moneda_cuentaporpagar float not null,
+  fecha_emision_cuentaporpagar DATE not null,
   fecha_movimiento_cuentaporpagar DATE not null,
+  saldo_pago_cuentaporpagar float not null,
   monto_pago_cuentaporpagar float not null,
+  estado_cuentaporpagar tinyint default 0,
   FOREIGN KEY (fk_id_tipopago) REFERENCES tbl_TipoPago(pk_id_tipopago),
   FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
   FOREIGN KEY (fk_id_conceptocuentaporpagar) REFERENCES tbl_ConceptoCuentaPorPagar(pk_id_conceptocuentaporpagar),
