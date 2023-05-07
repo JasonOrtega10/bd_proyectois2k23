@@ -58,7 +58,7 @@ primary key(id_factura)
 
 CREATE TABLE if not exists `tbl_CuentaPorPagar`(
   pk_id_cuentaporpagar Int PRIMARY KEY,
-  fk_id_almacen INT not null PRIMARY KEY,
+  -- fk_id_almacen INT not null PRIMARY KEY,
   fk_id_proveedor INT not null,
   fk_id_tipopago INT not null,
   fk_id_moneda INT not null,
@@ -72,8 +72,7 @@ CREATE TABLE if not exists `tbl_CuentaPorPagar`(
   estado_cuentaporpagar tinyint default 0,
   FOREIGN KEY (fk_id_tipopago) REFERENCES tbl_TipoPago(pk_id_tipopago),
   -- FOREIGN KEY (fk_id_almacen) REFERENCES tbl_Almacen(pk_id_almacen),
-    FOREIGN KEY (fk_id_proveedor) REFERENCES pk_id_proveedor(pk_id_proveedor),
-  FOREIGN KEY (fk_id_tipopago) REFERENCES tbl_TipoPago(pk_id_tipopago),
+  FOREIGN KEY (fk_id_proveedor) REFERENCES tbl_Proveedor(pk_id_proveedor),
   FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
   FOREIGN KEY (fk_id_conceptocuentaporpagar) REFERENCES tbl_ConceptoCuentaPorPagar(pk_id_conceptocuentaporpagar),
   FOREIGN KEY (fk_id_factura) REFERENCES factura(id_factura)
