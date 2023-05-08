@@ -375,24 +375,10 @@ estado_conceptocuentaporpagar tinyint default 0 not null,
 primary key(pk_id_conceptocuentaporpagar)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*CREATE TABLE if not exists `factura` (
-  `id_factura` int NOT NULL AUTO_INCREMENT,
-  `id_compras` int DEFAULT NULL,
-  `total` FLOAT,
-  `estatus` TINYINT,
-  PRIMARY KEY (`id_factura`),
-  KEY `id_compras_idx` (`id_compras`),
-  CONSTRAINT `id_compras` FOREIGN KEY (`id_compras`) REFERENCES `compras` (`id_compras`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;*/
-
-CREATE TABLE if not exists `factura` (
-`id_factura` int not null,
-primary key(id_factura)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE if not exists `tbl_CuentaPorPagar`(
-  pk_id_cuentaporpagar Int PRIMARY KEY,
-  -- fk_id_almacen INT not null PRIMARY KEY,
+  pk_id_cuentaporpagar INT not null,
+  pk_id_almacen INT not null ,
   fk_id_proveedor INT not null,
   fk_id_tipopago INT not null,
   fk_id_moneda INT not null,
@@ -404,12 +390,13 @@ CREATE TABLE if not exists `tbl_CuentaPorPagar`(
   saldo_pago_cuentaporpagar float not null,
   monto_pago_cuentaporpagar float not null,
   estado_cuentaporpagar tinyint default 0,
+  PRIMARY KEY (pk_id_cuentaporpagar,pk_id_almacen),
   FOREIGN KEY (fk_id_tipopago) REFERENCES tbl_TipoPago(pk_id_tipopago),
-  -- FOREIGN KEY (fk_id_almacen) REFERENCES tbl_Almacen(pk_id_almacen),
+  FOREIGN KEY (pk_id_almacen) REFERENCES tbl_almacen(codigo_almacen),
   FOREIGN KEY (fk_id_proveedor) REFERENCES tbl_Proveedor(pk_id_proveedor),
   FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
   FOREIGN KEY (fk_id_conceptocuentaporpagar) REFERENCES tbl_ConceptoCuentaPorPagar(pk_id_conceptocuentaporpagar),
-  FOREIGN KEY (fk_id_factura) REFERENCES factura(id_factura)
+  FOREIGN KEY (fk_id_factura) REFERENCES tbl_factura(pk_id_factura)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
