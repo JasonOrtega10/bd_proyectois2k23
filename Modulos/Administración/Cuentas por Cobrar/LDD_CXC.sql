@@ -1,5 +1,5 @@
-create database if not exists `colchoneria`;
-use `colchoneria`;
+create database if not exists `sig`;
+use `sig`;
 
 create table if not exists `tbl_Moneda`(
 	pk_id_moneda int primary key,
