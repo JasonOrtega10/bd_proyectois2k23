@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS colchoneria;
-CREATE DATABASE IF NOT EXISTS colchoneria;
-USE colchoneria;
+DROP DATABASE IF EXISTS sig;
+CREATE DATABASE IF NOT EXISTS sig;
+USE sig;
 /*------Consulta Inteligente------------------*/
 DROP TABLE IF EXISTS tbl_consultainteligente;
 CREATE TABLE IF NOT EXISTS tbl_consultainteligente (
@@ -148,9 +148,65 @@ CREATE TABLE IF NOT EXISTS `tbl_bitacoraDeEventos` (
 )ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
 
+/*------------------Almacen/Inventario-------------*/
+DROP TABLE IF EXISTS tbl_almacen;
+CREATE TABLE tbl_almacen
+(
+	codigo_almacen INT PRIMARY KEY NOT NULL,
+    nombre_almacen VARCHAR(60) NOT NULL,
+    estatus_almacen VARCHAR(1) NOT NULL
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS tbl_linea;
+CREATE TABLE  tbl_linea
+(
+	codigo_linea int PRIMARY KEY,
+    nombre_linea VARCHAR(60),
+    estatus_linea VARCHAR(1)
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS tbl_marca;
+CREATE TABLE tbl_marca
+(
+	codigo_marca int PRIMARY KEY,
+    nombre_marca VARCHAR(60),
+    estatus_marca VARCHAR(1)
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS tbl_producto;
+CREATE TABLE tbl_producto
+(
+	codigo_producto int PRIMARY KEY,
+    nombre_producto VARCHAR(60),
+    codigo_linea int,
+    codigo_marca int,
+    existencia_producto FLOAT(10,2),
+    costouni_producto FLOAT(10,2),
+    preciouni_producto FLOAT(10,2),
+    fechaultentrada_marca VARCHAR(60),
+    fechaultsalida_marca VARCHAR(60),
+    estatus_producto VARCHAR(1),
+    FOREIGN KEY (codigo_linea) REFERENCES tbl_linea(codigo_linea),
+    FOREIGN KEY (codigo_marca) REFERENCES tbl_marca(codigo_marca)
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS tbl_existencia;
+CREATE TABLE tbl_existencia
+(
+    codigo_almacen int,
+    codigo_producto int,
+    saldo_existencia FLOAT(10,2),
+    PRIMARY KEY (codigo_almacen, codigo_producto),
+	FOREIGN KEY (codigo_almacen) REFERENCES tbl_almacen(codigo_almacen),
+    FOREIGN KEY (codigo_producto) REFERENCES tbl_producto(codigo_producto)
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
+
+
 /*-------------COMPRAS------------*/
 
-DROP TABLE IF EXISTS `tbl_proveedor`;
 create table if not exists `tbl_proveedor`(
 pk_id_proveedor int not null,
 nombre_proveedor varchar(50) not null,
@@ -168,28 +224,46 @@ estado_proveedor tinyint not null,
 primary key(pk_id_proveedor)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `tbl_productos`;
-CREATE TABLE `tbl_productos` (
-  `pk_id_productos` int NOT NULL,
-  `nombre_productos` varchar(45) DEFAULT NULL,
-  `marca_productos` varchar(45) DEFAULT NULL,
-  `precio_unitario_productos` float DEFAULT NULL,
-  PRIMARY KEY (`pk_id_productos`)
+CREATE TABLE if not exists `tbl_TipoPago` (
+	pk_id_tipopago INT PRIMARY KEY,
+	nombre_tipopago VARCHAR(50) not null,
+	estado_tipopago tinyint not null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists `tbl_Moneda`(
+	pk_id_moneda int primary key,
+	nombre_moneda VARCHAR(50) not null,
+	simbolo_moneda VARCHAR(5) not null,
+	cambio_moneda float not null,
+    estado_moneda tinyint not null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `tbl_listado_productos`;
+CREATE TABLE `tbl_listado_productos` (
+  `pk_id_listado_productos` int NOT NULL,
+  `nombre_listado_productos` varchar(45) DEFAULT NULL,
+  `marca_listado_productos` varchar(45) DEFAULT NULL,
+  `precio_unitario_listado_productos` float DEFAULT NULL,
+  PRIMARY KEY (`pk_id_listado_productos`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `tbl_compra`;
 CREATE TABLE `tbl_compra` (
   `pk_id_compra` int NOT NULL,
+  `codigo_almacen` int,
   `fk_id_proveedor` int DEFAULT NULL,
   `fecha_creacion_compra` varchar(45) DEFAULT NULL,
   `prioridad_compra` varchar(45) DEFAULT NULL,
   `fecha_entrega_compra` varchar(45) DEFAULT NULL,
   `total_compra` float DEFAULT NULL,
-  `forma_pago_compra` varchar(45) DEFAULT NULL,
+  `fk_id_tipoPago` int DEFAULT NULL,
+  `tipo_compra` varchar(1) DEFAULT NULL,
   `estatus_compra` tinyint DEFAULT NULL,
-  PRIMARY KEY (`pk_id_compra`),
+  PRIMARY KEY (`pk_id_compra`, `codigo_almacen`),
   KEY `fkidproveedor_compra_idx` (`fk_id_proveedor`),
-  CONSTRAINT `fkidproveedor_compra` FOREIGN KEY (`fk_id_proveedor`) REFERENCES `tbl_proveedor` (`pk_id_proveedor`)
+KEY `fkidtipopago_compra_idx` (`fk_id_tipopago`),
+CONSTRAINT `fkidproveedor_compra` FOREIGN KEY (`fk_id_proveedor`) REFERENCES `tbl_proveedor` (`pk_id_proveedor`),
+CONSTRAINT `fkidtipopago_compra` FOREIGN KEY (`fk_id_tipopago`) REFERENCES `tbl_TipoPago` (`pk_id_tipopago`),
+FOREIGN KEY (`codigo_almacen`) REFERENCES `tbl_almacen`(`codigo_almacen`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -197,13 +271,14 @@ DROP TABLE IF EXISTS `tbl_detalle_compra`;
 CREATE TABLE `tbl_detalle_compra` (
   `pk_id_detalle_compra` int NOT NULL,
   `fk_id_compra` int DEFAULT NULL,
-  `fk_id_productos` int DEFAULT NULL,
+  `fk_id_listado_productos` int DEFAULT NULL,
   `cantidad_detalle_compra` int DEFAULT NULL,
+  `precio_unitario` int DEFAULT NULL,
   PRIMARY KEY (`pk_id_detalle_compra`),
   KEY `fk_id_compra_detalle_compra_idx` (`fk_id_compra`),
-  KEY `fk_id_productos_detalle_compra_idx` (`fk_id_productos`),
+  KEY `fk_id_productos_detalle_compra_idx` (`fk_id_listado_productos`),
   CONSTRAINT `fk_id_compra_detalle_compra` FOREIGN KEY (`fk_id_compra`) REFERENCES `tbl_compra` (`pk_id_compra`),
-  CONSTRAINT `fk_id_productos_detalle_compra` FOREIGN KEY (`fk_id_productos`) REFERENCES `tbl_productos` (`pk_id_productos`)
+  CONSTRAINT `fk_id_productos_detalle_compra` FOREIGN KEY (`fk_id_listado_productos`) REFERENCES `tbl_listado_productos` (`pk_id_listado_productos`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -222,114 +297,25 @@ CREATE TABLE `tbl_orden_compra` (
   CONSTRAINT `fk_id_proveedor_compra` FOREIGN KEY (`fk_id_proveedor`) REFERENCES `tbl_proveedor` (`pk_id_proveedor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 DROP TABLE IF EXISTS `tbl_detalle_orden_compra`;
 CREATE TABLE `tbl_detalle_orden_compra` (
   `pk_id_detalle_orden_compra` int NOT NULL,
   `fk_id_orden_compra` int DEFAULT NULL,
-  `fk_id_productos` int DEFAULT NULL,
+  `fk_id_listado_productos` int DEFAULT NULL,
   `cantidad_detalle_orden_compra` int DEFAULT NULL,
+  `precio_unitario` int DEFAULT NULL,
   PRIMARY KEY (`pk_id_detalle_orden_compra`),
   KEY `fk_id_orden_compra_detalle_orden_idx` (`fk_id_orden_compra`),
-  KEY `fk_id_productos_detalle_orden_idx` (`fk_id_productos`),
+  KEY `fk_id_productos_detalle_orden_idx` (`fk_id_listado_productos`),
   CONSTRAINT `fk_id_orden_compra_detalle_orden` FOREIGN KEY (`fk_id_orden_compra`) REFERENCES `tbl_orden_compra` (`pk_id_orden_compra`),
-  CONSTRAINT `fk_id_productos_detalle_orden` FOREIGN KEY (`fk_id_productos`) REFERENCES `tbl_productos` (`pk_id_productos`)
+  CONSTRAINT `fk_id_productos_detalle_orden` FOREIGN KEY (`fk_id_listado_productos`) REFERENCES `tbl_listado_productos` (`pk_id_listado_productos`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-DROP TABLE IF EXISTS `tbl_devolucion_compras`;
-CREATE TABLE `tbl_devolucion_compras` (
-  `pk_id_devolucion` int NOT NULL,
-  `fk_id_detalle_factura` int DEFAULT NULL,
-  `fecha_devolucion` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`pk_id_devolucion`),
-  KEY `fk_id_detalle_factura_devolucio_idx` (`fk_id_detalle_factura`),
-  CONSTRAINT `fk_id_detalle_factura_devolucio` FOREIGN KEY (`fk_id_detalle_factura`) REFERENCES `tbl_detalle_factura` (`pk_id_detalle_factura`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-/*------------------Almacen-------------*/
-
-CREATE TABLE tbl_almacen
-(
-	codigo_almacen INT PRIMARY KEY NOT NULL,
-    nombre_almacen VARCHAR(60) NOT NULL,
-    estatus_almacen VARCHAR(1) NOT NULL
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
-
-CREATE TABLE  tbl_linea
-(
-	codigo_linea VARCHAR(5) PRIMARY KEY NOT NULL,
-    nombre_linea VARCHAR(60) NOT NULL,
-    estatus_linea VARCHAR(1) NOT NULL
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
-
-CREATE TABLE tbl_marca
-(
-	codigo_marca VARCHAR(5) PRIMARY KEY NOT NULL,
-    nombre_marca VARCHAR(60) NOT NULL,
-    estatus_marca VARCHAR(1) NOT NULL
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
-
-CREATE TABLE tbl_producto
-(
-    codigo_producto VARCHAR(18) PRIMARY KEY NOT NULL,
-    nombre_producto VARCHAR(60) NOT NULL,
-    codigo_linea VARCHAR(5) NOT NULL,
-    codigo_marca VARCHAR(5) NOT NULL,
-    existencia_producto FLOAT(10,2) NOT NULL,
-    preciouni_producto FLOAT(10,2) NOT NULL,
-    estatus_producto VARCHAR(1) NOT NULL,
-    FOREIGN KEY (codigo_linea) REFERENCES tbl_linea(codigo_linea),
-    FOREIGN KEY (codigo_marca) REFERENCES tbl_marca(codigo_marca)
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
-
-CREATE TABLE tbl_existencia
-(
-    codigo_almacen INT NOT NULL,
-    codigo_producto VARCHAR(18) NOT NULL,
-    saldo_existencia FLOAT(10,2) NOT NULL,
-    PRIMARY KEY (codigo_almacen, codigo_producto),
-	FOREIGN KEY (codigo_almacen) REFERENCES tbl_almacen(codigo_almacen),
-    FOREIGN KEY (codigo_producto) REFERENCES tbl_producto(codigo_producto)
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
-
-
-
-
-/*------------------------Cuentas por Cobrar-----------------*/
-
-create table if not exists `tbl_Moneda`(
-	pk_id_moneda int primary key auto_increment,
-	nombre_moneda VARCHAR(50) not null,
-	simbolo_moneda VARCHAR(5) not null,
-	cambio_moneda float not null,
-    estado_moneda tinyint not null
-);
-CREATE TABLE if not exists `tbl_TipoPago` (
-	pk_id_tipopago INT PRIMARY KEY auto_increment,
-	nombre_tipopago VARCHAR(50) not null,
-	estado_tipopago tinyint not null
-);
-CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
-  fk_id_factura INT not null primary key,
-  fk_id_almacen INT not null,
-  fk_id_tipoPago INT not null,
-  fk_id_moneda INT not null,
-  fecha_emision_cxc DATE not null,
-  fecha_pago_cxc DATE default null,
-  cambio_moneda_pago_cxc float not null default 0,
-  monto_cobro_cxc float not null default 0,
-  monto_pago_cxc float not null default 0,
-  estado_cxc tinyint default 0,
-  -- FOREIGN KEY (fk_id_factura) REFERENCES EncabezadoFactura(id_encabezado),
-  -- FOREIGN KEY (fk_id_almacen) REFERENCES tbl_Almacen(pk_id_almacen),
-  FOREIGN KEY (fk_id_tipoPago) REFERENCES tbl_TipoPago(pk_id_tipopago),
-  FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda)
-);
 
 
 /*----------------Cuenta Por Pagar----------------*/
 
-CREATE TABLE `tbl_ConceptoCuentaPorPagar`(
+
+CREATE TABLE if not exists `tbl_ConceptoCuentaPorPagar`(
 pk_id_conceptocuentaporpagar int not null,
 descripcion_conceptocuentaporpagar varchar(50) not null,
 tipoconcepto_conceptocuentaporpagar varchar(15) not null,
@@ -349,7 +335,7 @@ CREATE TABLE `tbl_factura` (
   FOREIGN KEY (pk_id_proveedor) REFERENCES tbl_Proveedor(pk_id_proveedor)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `tbl_CuentaPorPagar`(
+CREATE TABLE if not exists `tbl_CuentaPorPagar`(
   pk_id_cuentaporpagar INT not null,
   pk_id_almacen INT not null ,
   pk_id_proveedor INT not null,
@@ -370,6 +356,41 @@ CREATE TABLE `tbl_CuentaPorPagar`(
   FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
   FOREIGN KEY (fk_id_conceptocuentaporpagar) REFERENCES tbl_ConceptoCuentaPorPagar(pk_id_conceptocuentaporpagar),
   FOREIGN KEY (pk_id_factura) REFERENCES tbl_factura(pk_id_factura)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/*------------------------Cuentas por Cobrar-----------------*/
+
+
+CREATE TABLE if not exists `tbl_ConceptoCuentaPorCobrar`(
+pk_id_concepto_cxc int not null primary key,
+descripcion_concepto_cxc varchar(75) not null,
+tipoconcepto_concepto_cxc varchar(15) not null,
+estado_concepto_cxc tinyint default 0 not null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
+  pk_comprobante_cxc INT not null primary key,
+  fk_id_factura INT not null,
+  fk_id_almacen INT not null,
+  fk_id_cliente INT not null,
+  fk_id_tipoPago INT not null,
+  fk_id_moneda INT not null,
+  fk_id_concepto_cxc INT not null,
+  fecha_emision_cxc DATE not null,
+  fecha_pago_cxc DATE default null,
+  cambio_moneda_pago_cxc float not null default 0,
+  monto_cobro_cxc float not null default 0,
+  monto_pago_cxc float not null default 0,
+  estado_cxc tinyint default 0,
+  key(fk_id_factura, fk_id_almacen, fk_id_cliente),
+  -- FOREIGN KEY (fk_id_factura) REFERENCES tbl_venta(Pk_idVenta),
+  -- FOREIGN KEY (fk_id_almacen) REFERENCES tbl_almacen(Pk_idAlmacen),
+  -- FOREIGN KEY (fk_id_cliente) REFERENCES tbl_clientes(Pk_idCliente),
+  FOREIGN KEY (fk_id_tipoPago) REFERENCES tbl_TipoPago(pk_id_tipopago),
+  FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
+  FOREIGN KEY (fk_id_concepto_cxc) REFERENCES tbl_ConceptoCuentaPorCobrar(pk_id_concepto_cxc)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
