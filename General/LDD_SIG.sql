@@ -152,9 +152,10 @@ CREATE TABLE IF NOT EXISTS `tbl_bitacoraDeEventos` (
 DROP TABLE IF EXISTS tbl_almacen;
 CREATE TABLE tbl_almacen
 (
-	codigo_almacen INT PRIMARY KEY NOT NULL,
+	codigo_almacen int,
     nombre_almacen VARCHAR(60) NOT NULL,
-    estatus_almacen VARCHAR(1) NOT NULL
+    estatus_almacen VARCHAR(1) NOT NULL,
+    primary key(codigo_almacen)
 ) ENGINE=INNODB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS tbl_linea;
@@ -325,7 +326,7 @@ primary key(pk_id_conceptocuentaporpagar)
 
 CREATE TABLE `tbl_factura` (
   pk_id_factura int NOT NULL,
-  pk_id_almacen INT not null,
+  pk_id_almacen int not null,
   pk_id_proveedor INT not null,
   fecha_emision_factura DATE not null,
   total_factura float DEFAULT NULL,
@@ -360,44 +361,8 @@ CREATE TABLE if not exists `tbl_CuentaPorPagar`(
 
 
 
-/*------------------------Cuentas por Cobrar-----------------*/
-
-
-CREATE TABLE if not exists `tbl_ConceptoCuentaPorCobrar`(
-pk_id_concepto_cxc int not null primary key,
-descripcion_concepto_cxc varchar(75) not null,
-tipoconcepto_concepto_cxc varchar(15) not null,
-estado_concepto_cxc tinyint default 0 not null
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
-  pk_comprobante_cxc INT not null primary key,
-  fk_id_factura INT not null,
-  fk_id_almacen VARCHAR(5) not null,
-  fk_id_cliente INT not null,
-  fk_id_tipoPago INT not null,
-  fk_id_moneda INT not null,
-  fk_id_concepto_cxc INT not null,
-  fecha_emision_cxc DATE not null,
-  fecha_pago_cxc DATE default null,
-  cambio_moneda_pago_cxc float not null default 0,
-  monto_cobro_cxc float not null default 0,
-  monto_pago_cxc float not null default 0,
-  estado_cxc tinyint default 0,
-  key(fk_id_factura, fk_id_almacen, fk_id_cliente),
-  FOREIGN KEY (fk_id_factura) REFERENCES tbl_venta(Pk_idVenta),
-  FOREIGN KEY (fk_id_almacen) REFERENCES tbl_almacen(codigo_almacen),
-  FOREIGN KEY (fk_id_cliente) REFERENCES tbl_clientes(Pk_idCliente),
-  FOREIGN KEY (fk_id_tipoPago) REFERENCES tbl_TipoPago(pk_id_tipopago),
-  FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
-  FOREIGN KEY (fk_id_concepto_cxc) REFERENCES tbl_ConceptoCuentaPorCobrar(pk_id_concepto_cxc)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 /*-----------Ventas----------------*/
--- -----------------------------------------------------
--- Table `tbl_estados`
--- -----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `tbl_estados` (
   `Pk_id_estados` INT NOT NULL,
   `Descripcion_estados` VARCHAR(45) NOT NULL,
@@ -405,10 +370,6 @@ CREATE TABLE IF NOT EXISTS `tbl_estados` (
   PRIMARY KEY (`Pk_id_estados`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `tbl_vendedores`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_vendedores` (
   `Pk_idVendedores` INT NOT NULL,
   `Dpi_vendedores` VARCHAR(45) NOT NULL,
@@ -425,9 +386,6 @@ CREATE TABLE IF NOT EXISTS `tbl_vendedores` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_clientes`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_clientes` (
   `Pk_idClientes` INT NOT NULL,
   `Dpi_clientes` VARCHAR(45) NOT NULL,
@@ -458,12 +416,9 @@ CREATE TABLE IF NOT EXISTS `tbl_clientes` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_venta`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_venta` (
   `Pk_idVenta` INT NOT NULL,
-  `codigo_almacen` VARCHAR(5) NOT NULL,
+  `codigo_almacen` INT NOT NULL,
   `fecha_venta` DATETIME NOT NULL,
   `Descuento_venta` FLOAT NOT NULL,
   `IVA_venta` FLOAT NOT NULL,
@@ -483,9 +438,6 @@ CREATE TABLE IF NOT EXISTS `tbl_venta` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_devolucion`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_devolucion` (
   `Pk_idDevolucion` INT NOT NULL,
   `Pk_idClientes` INT NOT NULL,
@@ -502,33 +454,28 @@ CREATE TABLE IF NOT EXISTS `tbl_devolucion` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_pedido`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_pedido` (
   `Pk_idPedido` INT NOT NULL,
-  `codigo_almacen` VARCHAR(5) NOT NULL,
+  `codigo_almacen` INT NOT NULL,
   `Fecha_pedido` DATETIME NOT NULL,
   `Pk_idClientes` INT NOT NULL,
   PRIMARY KEY (`Pk_idPedido`, `codigo_almacen`),
   CONSTRAINT `fk_cliente`
     FOREIGN KEY (`Pk_idClientes`)
     REFERENCES `tbl_clientes` (`Pk_idClientes`),
-	CONSTRAINT `fk_almacen`
+	CONSTRAINT `fk_codigo_almacen`
     FOREIGN KEY (`codigo_almacen`)
     REFERENCES `tbl_almacen` (`codigo_almacen`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_detalle_venta`
--- -----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `tbl_detalle_venta` (
-  `codigo_almacen` VARCHAR(5) NOT NULL,
+  `codigo_almacen` INT NOT NULL,
   `PK_orden_detalleventa` INT NOT NULL,
   `Pk_idVenta` INT NOT NULL,
-  `codigo_producto` VARCHAR(18) NOT NULL,
+  `codigo_producto` int NOT NULL,
   `Cantidad_detalleventa` INT NOT NULL,
   `Precio_uni_detalleventa` FLOAT NOT NULL,
   `Total_detalleventa` FLOAT NOT NULL,
@@ -544,42 +491,38 @@ CREATE TABLE IF NOT EXISTS `tbl_detalle_venta` (
     REFERENCES `tbl_venta` (`Pk_idVenta`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-    CONSTRAINT `fk_almacen`
+    CONSTRAINT `fk_codigo_almacenes`
     FOREIGN KEY (`codigo_almacen`)
     REFERENCES `tbl_almacen` (`codigo_almacen`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_cotizacion`
--- -----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `tbl_cotizacion` (
   `Pk_idCotizacion` INT NOT NULL,
-  `codigo_almacen` VARCHAR(5) NOT NULL,
-  `codigo_producto` VARCHAR(18) NOT NULL,
+  `codigo_almacen` INT NOT NULL,
+  `codigo_producto` INT NOT NULL,
   `Pk_idClientes` INT NOT NULL,
   PRIMARY KEY (`Pk_idCotizacion`, `codigo_almacen`),
   CONSTRAINT `clienteCoti`
     FOREIGN KEY (`Pk_idClientes`)
     REFERENCES `tbl_clientes` (`Pk_idClientes`),
-    CONSTRAINT `fk_almacen`
+    CONSTRAINT `fk_almacenes`
     FOREIGN KEY (`codigo_almacen`)
     REFERENCES `tbl_almacen` (`codigo_almacen`),
-	CONSTRAINT `fk_producto`
+	CONSTRAINT `fk_codigo_producto`
     FOREIGN KEY (`codigo_producto`)
     REFERENCES `tbl_producto` (`codigo_producto`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_detalle_Cotizacion`
--- -----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `tbl_detalle_Cotizacion` (
   `Pk_detallecotizacion` INT NOT NULL,
   `Pk_idCotizacion` INT NOT NULL,
-  `codigo_producto` VARCHAR(18),
+  `codigo_producto` INT NOT NULL,
   `Cantidad_detallecotizacion` INT NOT NULL,
   `Precio_uni_detallecotizacion` FLOAT NOT NULL,
   `Total_detalle_detallecotizacion` FLOAT NOT NULL,
@@ -588,20 +531,18 @@ CREATE TABLE IF NOT EXISTS `tbl_detalle_Cotizacion` (
   CONSTRAINT `fk_cotizacion`
     FOREIGN KEY (`Pk_idCotizacion`)
     REFERENCES `tbl_cotizacion` (`Pk_idCotizacion`),
-    CONSTRAINT `fk_producto`
+    CONSTRAINT `fk_codigo_productos`
     FOREIGN KEY (`codigo_producto`)
     REFERENCES `tbl_producto` (`codigo_producto`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `tbl_detalle_pedido`
--- -----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `tbl_detalle_pedido` (
   `Pk_detalle_pedido` INT NOT NULL,
   `Pk_idPedido` INT NOT NULL,
-  `codigo_producto` VARCHAR(18) NOT NULL,
+  `codigo_producto` INT NOT NULL,
   `Cantidad_detallepedido` INT NOT NULL,
   `Precio_uni_detallepedido` FLOAT NOT NULL,
   `Total_detallepedido` FLOAT NOT NULL,
@@ -610,9 +551,42 @@ CREATE TABLE IF NOT EXISTS `tbl_detalle_pedido` (
   CONSTRAINT `fk_pedido`
     FOREIGN KEY (`Pk_idPedido`)
     REFERENCES `tbl_pedido` (`Pk_idPedido`),
-    CONSTRAINT `fk_producto`
+    CONSTRAINT `fk_productos`
     FOREIGN KEY (`codigo_producto`)
-    REFERENCES `tbl_producto` (`codigo_almacen`)
+    REFERENCES `tbl_producto` (`codigo_producto`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+/*------------------------Cuentas por Cobrar-----------------*/
+
+
+CREATE TABLE if not exists `tbl_ConceptoCuentaPorCobrar`(
+pk_id_concepto_cxc int not null primary key,
+descripcion_concepto_cxc varchar(75) not null,
+tipoconcepto_concepto_cxc varchar(15) not null,
+estado_concepto_cxc tinyint default 0 not null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
+  pk_comprobante_cxc INT not null primary key,
+  fk_id_factura INT not null,
+  fk_id_almacen INT not null,
+  fk_id_cliente INT not null,
+  fk_id_tipoPago INT not null,
+  fk_id_moneda INT not null,
+  fk_id_concepto_cxc INT not null,
+  fecha_emision_cxc DATE not null,
+  fecha_pago_cxc DATE default null,
+  cambio_moneda_pago_cxc float not null default 0,
+  monto_cobro_cxc float not null default 0,
+  monto_pago_cxc float not null default 0,
+  estado_cxc tinyint default 0,
+  key(fk_id_factura, fk_id_almacen, fk_id_cliente),
+  FOREIGN KEY (fk_id_factura) REFERENCES tbl_venta(Pk_idVenta),
+  FOREIGN KEY (fk_id_almacen) REFERENCES tbl_almacen(codigo_almacen),
+  FOREIGN KEY (fk_id_cliente) REFERENCES tbl_clientes(Pk_idClientes),
+  FOREIGN KEY (fk_id_tipoPago) REFERENCES tbl_TipoPago(pk_id_tipopago),
+  FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
+  FOREIGN KEY (fk_id_concepto_cxc) REFERENCES tbl_ConceptoCuentaPorCobrar(pk_id_concepto_cxc)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
