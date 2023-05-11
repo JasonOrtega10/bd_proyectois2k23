@@ -373,7 +373,7 @@ estado_concepto_cxc tinyint default 0 not null
 CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
   pk_comprobante_cxc INT not null primary key,
   fk_id_factura INT not null,
-  fk_id_almacen INT not null,
+  fk_id_almacen VARCHAR(5) not null,
   fk_id_cliente INT not null,
   fk_id_tipoPago INT not null,
   fk_id_moneda INT not null,
@@ -385,9 +385,9 @@ CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
   monto_pago_cxc float not null default 0,
   estado_cxc tinyint default 0,
   key(fk_id_factura, fk_id_almacen, fk_id_cliente),
-  -- FOREIGN KEY (fk_id_factura) REFERENCES tbl_venta(Pk_idVenta),
-  -- FOREIGN KEY (fk_id_almacen) REFERENCES tbl_almacen(Pk_idAlmacen),
-  -- FOREIGN KEY (fk_id_cliente) REFERENCES tbl_clientes(Pk_idCliente),
+  FOREIGN KEY (fk_id_factura) REFERENCES tbl_venta(Pk_idVenta),
+  FOREIGN KEY (fk_id_almacen) REFERENCES tbl_almacen(codigo_almacen),
+  FOREIGN KEY (fk_id_cliente) REFERENCES tbl_clientes(Pk_idCliente),
   FOREIGN KEY (fk_id_tipoPago) REFERENCES tbl_TipoPago(pk_id_tipopago),
   FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
   FOREIGN KEY (fk_id_concepto_cxc) REFERENCES tbl_ConceptoCuentaPorCobrar(pk_id_concepto_cxc)
@@ -395,12 +395,9 @@ CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
 
 
 /*-----------Ventas----------------*/
-
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-
-
+-- -----------------------------------------------------
+-- Table `tbl_estados`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_estados` (
   `Pk_id_estados` INT NOT NULL,
   `Descripcion_estados` VARCHAR(45) NOT NULL,
@@ -409,25 +406,28 @@ CREATE TABLE IF NOT EXISTS `tbl_estados` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `tbl_vendedores`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_vendedores` (
   `Pk_idVendedores` INT NOT NULL,
   `Dpi_vendedores` VARCHAR(45) NOT NULL,
   `Nombres_vendedores` VARCHAR(45) NOT NULL,
   `Apellidos_vendedores` VARCHAR(45) NOT NULL,
-  `estado_vendedores` INT NOT NULL,
+  `Pk_id_estados` INT NOT NULL,
   `nit_vendedores` VARCHAR(45) NOT NULL,
   `edad_vendedores` INT NOT NULL,
   PRIMARY KEY (`Pk_idVendedores`),
   CONSTRAINT `fk_estad_cl0`
-    FOREIGN KEY (`estado_vendedores`)
+    FOREIGN KEY (`Pk_id_estados`)
     REFERENCES `tbl_estados` (`Pk_id_estados`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_estad_cl_idx` ON `tbl_vendedores` (`estado_vendedores` ASC) VISIBLE;
-
-
+-- -----------------------------------------------------
+-- Table `tbl_clientes`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_clientes` (
   `Pk_idClientes` INT NOT NULL,
   `Dpi_clientes` VARCHAR(45) NOT NULL,
@@ -435,10 +435,10 @@ CREATE TABLE IF NOT EXISTS `tbl_clientes` (
   `Apellidos_clientes` VARCHAR(45) NOT NULL,
   `FechaNac_clientes` DATE NOT NULL,
   `nit_clientes` VARCHAR(45) NOT NULL,
-  `estado_clientes` INT NOT NULL,
+  `Pk_id_estados` INT NOT NULL,
   `direccion_clientes` VARCHAR(45) NOT NULL,
   `telefono_clientes` VARCHAR(45) NOT NULL,
-  `fk_idvendedor_clientes` INT NOT NULL,
+  `Pk_idVendedores` INT NOT NULL,
   `SMesAnterior_clientes` FLOAT NOT NULL,
   `SActual_clientes` FLOAT NOT NULL,
   `CargoMes_clientes` FLOAT NOT NULL,
@@ -447,175 +447,172 @@ CREATE TABLE IF NOT EXISTS `tbl_clientes` (
   `AbonosAcumulados_clientes` FLOAT NOT NULL,
   PRIMARY KEY (`Pk_idClientes`),
   CONSTRAINT `fk_estad_cl`
-    FOREIGN KEY (`estado_clientes`)
+    FOREIGN KEY (`Pk_id_estados`)
     REFERENCES `tbl_estados` (`Pk_id_estados`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_vendedor`
-    FOREIGN KEY (`fk_idvendedor_clientes`)
+    FOREIGN KEY (`Pk_idVendedores`)
     REFERENCES `tbl_vendedores` (`Pk_idVendedores`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_estad_cl_idx` ON `tbl_clientes` (`estado_clientes` ASC) VISIBLE;
-
-CREATE INDEX `fk_vendedor_idx` ON `tbl_clientes` (`fk_idvendedor_clientes` ASC) VISIBLE;
-
-
+-- -----------------------------------------------------
+-- Table `tbl_venta`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_venta` (
   `Pk_idVenta` INT NOT NULL,
-  `Sucural_venta` VARCHAR(10) NOT NULL,
+  `codigo_almacen` VARCHAR(5) NOT NULL,
   `fecha_venta` DATETIME NOT NULL,
   `Descuento_venta` FLOAT NOT NULL,
-  `Fk_venta_venta` INT NOT NULL,
   `IVA_venta` FLOAT NOT NULL,
   `Total_venta` FLOAT NOT NULL,
   `Estado_fac_venta` VARCHAR(45) NOT NULL,
   `fecha_venci_venta` DATE NOT NULL,
   `moneda_venta` INT NOT NULL,
-  `fk_idcliente_venta` INT NOT NULL,
-  PRIMARY KEY (`Pk_idVenta`, `Sucural_venta`),
+  `Pk_idClientes` INT NOT NULL,
+  PRIMARY KEY (`Pk_idVenta`, `codigo_almacen`),
   CONSTRAINT `idcliente_v`
-    FOREIGN KEY (`fk_idcliente_venta`)
-    REFERENCES `tbl_clientes` (`Pk_idClientes`)
+    FOREIGN KEY (`Pk_idClientes`)
+    REFERENCES `tbl_clientes` (`Pk_idClientes`),
+    CONSTRAINT `fk_almacen`
+    FOREIGN KEY (`codigo_almacen`)
+    REFERENCES `tbl_almacen` (`codigo_almacen`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `idcliente_v_idx` ON `tbl_venta` (`fk_idcliente_venta` ASC) VISIBLE;
-
-
-CREATE TABLE IF NOT EXISTS `tbl_devolucion_venta` (
+-- -----------------------------------------------------
+-- Table `tbl_devolucion`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tbl_devolucion` (
   `Pk_idDevolucion` INT NOT NULL,
-  `Fk_idCliente_devolucion` INT NOT NULL,
+  `Pk_idClientes` INT NOT NULL,
   `Fecha_devolucion` DATETIME NOT NULL,
   `Nota_cred_devolucion` INT NOT NULL,
   `No_fac_devolucion` INT NOT NULL,
   PRIMARY KEY (`Pk_idDevolucion`),
   CONSTRAINT `asdsd`
     FOREIGN KEY (`No_fac_devolucion`)
-    REFERENCES `tbl_venta` (`Pk_idVenta`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-CREATE INDEX `asdsd_idx` ON `tbl_devolucion_venta` (`No_fac_devolucion` ASC) VISIBLE;
-
-
-CREATE TABLE IF NOT EXISTS `tbl_pedido` (
-  `Pk_idPedido` INT NOT NULL,
-  `sucursal_pedido` VARCHAR(15) NOT NULL,
-  `Fecha_pedido` DATETIME NOT NULL,
-  `Fk_idcliente_pedido` INT NOT NULL,
-  PRIMARY KEY (`Pk_idPedido`, `sucursal_pedido`),
-  CONSTRAINT `fk_cliente`
-    FOREIGN KEY (`Fk_idcliente_pedido`)
+    REFERENCES `tbl_venta` (`Pk_idVenta`),
+    FOREIGN KEY (`Pk_idClientes`)
     REFERENCES `tbl_clientes` (`Pk_idClientes`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_cliente_idx` ON `tbl_pedido` (`Fk_idcliente_pedido` ASC) VISIBLE;
+-- -----------------------------------------------------
+-- Table `tbl_pedido`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tbl_pedido` (
+  `Pk_idPedido` INT NOT NULL,
+  `codigo_almacen` VARCHAR(5) NOT NULL,
+  `Fecha_pedido` DATETIME NOT NULL,
+  `Pk_idClientes` INT NOT NULL,
+  PRIMARY KEY (`Pk_idPedido`, `codigo_almacen`),
+  CONSTRAINT `fk_cliente`
+    FOREIGN KEY (`Pk_idClientes`)
+    REFERENCES `tbl_clientes` (`Pk_idClientes`),
+	CONSTRAINT `fk_almacen`
+    FOREIGN KEY (`codigo_almacen`)
+    REFERENCES `tbl_almacen` (`codigo_almacen`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
-
+-- -----------------------------------------------------
+-- Table `tbl_detalle_venta`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_detalle_venta` (
-  `Pk_Sucursal_detalleventa` VARCHAR(10) NOT NULL,
+  `codigo_almacen` VARCHAR(5) NOT NULL,
   `PK_orden_detalleventa` INT NOT NULL,
-  `Fk_idventa_detalleventa` INT NOT NULL,
-  `Fk_idproduc_detalleventa` INT NOT NULL,
+  `Pk_idVenta` INT NOT NULL,
+  `codigo_producto` VARCHAR(18) NOT NULL,
   `Cantidad_detalleventa` INT NOT NULL,
   `Precio_uni_detalleventa` FLOAT NOT NULL,
   `Total_detalleventa` FLOAT NOT NULL,
   `Estado_detalleventa` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Pk_Sucursal_detalleventa`, `PK_orden_detalleventa`, `Fk_idventa_detalleventa`, `Fk_idproduc_detalleventa`),
-    CONSTRAINT `producto`
-    FOREIGN KEY (`Fk_idproduc_detalleventa`)
-    REFERENCES `tbl_productos` (`pk_id_productos`)
+  PRIMARY KEY (`codigo_almacen`, `PK_orden_detalleventa`, `Pk_idVenta`, `codigo_producto`),
+  CONSTRAINT `fk_producto`
+    FOREIGN KEY (`codigo_producto`)
+    REFERENCES `tbl_producto` (`codigo_producto`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `venta`
-    FOREIGN KEY (`Fk_idventa_detalleventa`)
+  CONSTRAINT `fk_venta`
+    FOREIGN KEY (`Pk_idVenta`)
     REFERENCES `tbl_venta` (`Pk_idVenta`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-CREATE INDEX `producto_idx` ON `tbl_detalle_venta` (`Fk_idproduc_detalleventa` ASC) VISIBLE;
-CREATE INDEX `venta_idx` ON `tbl_detalle_venta` (`Fk_idventa_detalleventa` ASC) VISIBLE;
-
-
-CREATE TABLE IF NOT EXISTS `tbl_cotizacion` (
-  `Pk_idCotizacion` INT NOT NULL,
-  `Sucursal_cotizacion` VARCHAR(15) NOT NULL,
-  `Fk_Idcliente_cotizacion` INT NOT NULL,
-  `Fk_detalleVenta_cotizacion` INT NOT NULL,
-  PRIMARY KEY (`Pk_idCotizacion`, `Sucursal_cotizacion`),
-  CONSTRAINT `clienteCoti`
-    FOREIGN KEY (`Fk_Idcliente_cotizacion`)
-    REFERENCES `tbl_clientes` (`Pk_idClientes`)
+    ON UPDATE NO ACTION,
+    CONSTRAINT `fk_almacen`
+    FOREIGN KEY (`codigo_almacen`)
+    REFERENCES `tbl_almacen` (`codigo_almacen`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `clienteCoti_idx` ON `tbl_cotizacion` (`Fk_Idcliente_cotizacion` ASC) VISIBLE;
+-- -----------------------------------------------------
+-- Table `tbl_cotizacion`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tbl_cotizacion` (
+  `Pk_idCotizacion` INT NOT NULL,
+  `codigo_almacen` VARCHAR(5) NOT NULL,
+  `codigo_producto` VARCHAR(18) NOT NULL,
+  `Pk_idClientes` INT NOT NULL,
+  PRIMARY KEY (`Pk_idCotizacion`, `codigo_almacen`),
+  CONSTRAINT `clienteCoti`
+    FOREIGN KEY (`Pk_idClientes`)
+    REFERENCES `tbl_clientes` (`Pk_idClientes`),
+    CONSTRAINT `fk_almacen`
+    FOREIGN KEY (`codigo_almacen`)
+    REFERENCES `tbl_almacen` (`codigo_almacen`),
+	CONSTRAINT `fk_producto`
+    FOREIGN KEY (`codigo_producto`)
+    REFERENCES `tbl_producto` (`codigo_producto`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
-
+-- -----------------------------------------------------
+-- Table `tbl_detalle_Cotizacion`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_detalle_Cotizacion` (
   `Pk_detallecotizacion` INT NOT NULL,
-  `Fk_idcoti_detallecotizacion` INT NOT NULL,
-  `Fk_idproduc_detallecotizacion` INT NOT NULL,
+  `Pk_idCotizacion` INT NOT NULL,
+  `codigo_producto` VARCHAR(18),
   `Cantidad_detallecotizacion` INT NOT NULL,
   `Precio_uni_detallecotizacion` FLOAT NOT NULL,
   `Total_detalle_detallecotizacion` FLOAT NOT NULL,
   `Estado_detallecotizacion` INT NOT NULL,
   PRIMARY KEY (`Pk_detallecotizacion`),
   CONSTRAINT `fk_cotizacion`
-    FOREIGN KEY (`Fk_idcoti_detallecotizacion`)
-    REFERENCES `tbl_cotizacion` (`Pk_idCotizacion`)
+    FOREIGN KEY (`Pk_idCotizacion`)
+    REFERENCES `tbl_cotizacion` (`Pk_idCotizacion`),
+    CONSTRAINT `fk_producto`
+    FOREIGN KEY (`codigo_producto`)
+    REFERENCES `tbl_producto` (`codigo_producto`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_cotizacion_idx` ON `tbl_detalle_Cotizacion` (`Fk_idcoti_detallecotizacion` ASC) VISIBLE;
-
+-- -----------------------------------------------------
+-- Table `tbl_detalle_pedido`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tbl_detalle_pedido` (
   `Pk_detalle_pedido` INT NOT NULL,
-  `Fk_pedido_detallepedido` INT NOT NULL,
-  `Fk_idproduc_detallepedido` INT NOT NULL,
+  `Pk_idPedido` INT NOT NULL,
+  `codigo_producto` VARCHAR(18) NOT NULL,
   `Cantidad_detallepedido` INT NOT NULL,
   `Precio_uni_detallepedido` FLOAT NOT NULL,
   `Total_detallepedido` FLOAT NOT NULL,
   `Estado_detallepedido` INT NOT NULL,
   PRIMARY KEY (`Pk_detalle_pedido`),
   CONSTRAINT `fk_pedido`
-    FOREIGN KEY (`Fk_pedido_detallepedido`)
-    REFERENCES `tbl_pedido` (`Pk_idPedido`)
+    FOREIGN KEY (`Pk_idPedido`)
+    REFERENCES `tbl_pedido` (`Pk_idPedido`),
+    CONSTRAINT `fk_producto`
+    FOREIGN KEY (`codigo_producto`)
+    REFERENCES `tbl_producto` (`codigo_almacen`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-CREATE INDEX `fk_pedido_idx` ON `tbl_detalle_pedido` (`Fk_pedido_detallepedido` ASC) VISIBLE;
-
-
-CREATE TABLE IF NOT EXISTS `tbl_saldos` (
-  `id_prod_saldos` INT NOT NULL,
-  `id_almacen_saldos` INT NOT NULL,
-  `saldo_saldos` INT NOT NULL,
-  PRIMARY KEY (`id_prod_saldos`, `id_almacen_saldos`),
-  CONSTRAINT `producto_exis`
-    FOREIGN KEY (`id_prod_saldos`)
-    REFERENCES `tbl_productos` (`pk_id_productos`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `almacen_exis`
-    FOREIGN KEY (`id_almacen_saldos`)
-    REFERENCES `tbl_almacen` (`codigo_almacen`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-CREATE INDEX `almacen_exis_idx` ON `tbl_saldos` (`id_almacen_saldos` ASC) VISIBLE;
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
