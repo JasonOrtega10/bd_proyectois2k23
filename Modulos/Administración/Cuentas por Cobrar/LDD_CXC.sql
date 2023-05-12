@@ -8,6 +8,7 @@ create table if not exists `tbl_Moneda`(
 	cambio_moneda float not null,
     estado_moneda tinyint not null
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE if not exists `tbl_TipoPago` (
 	pk_id_tipopago INT PRIMARY KEY,
 	nombre_tipopago VARCHAR(50) not null,
@@ -36,9 +37,9 @@ CREATE TABLE if not exists `tbl_CuentaPorCobrar`(
   monto_pago_cxc float not null default 0,
   estado_cxc tinyint default 0,
   key(fk_id_factura, fk_id_almacen, fk_id_cliente),
-  -- FOREIGN KEY (fk_id_factura) REFERENCES tbl_venta(Pk_idVenta),
-  -- FOREIGN KEY (fk_id_almacen) REFERENCES tbl_almacen(Pk_idAlmacen),
-  -- FOREIGN KEY (fk_id_cliente) REFERENCES tbl_clientes(Pk_idCliente),
+  FOREIGN KEY (fk_id_factura) REFERENCES tbl_venta(Pk_idVenta),
+  FOREIGN KEY (fk_id_almacen) REFERENCES tbl_almacen(codigo_almacen),
+  FOREIGN KEY (fk_id_cliente) REFERENCES tbl_clientes(Pk_idClientes),
   FOREIGN KEY (fk_id_tipoPago) REFERENCES tbl_TipoPago(pk_id_tipopago),
   FOREIGN KEY (fk_id_moneda) REFERENCES tbl_Moneda(pk_id_moneda),
   FOREIGN KEY (fk_id_concepto_cxc) REFERENCES tbl_ConceptoCuentaPorCobrar(pk_id_concepto_cxc)
