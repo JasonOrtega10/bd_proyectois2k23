@@ -427,6 +427,9 @@ CREATE TABLE IF NOT EXISTS `tbl_venta` (
   `fecha_venci_venta` DATE NOT NULL,
   `moneda_venta` INT NOT NULL,
   `Pk_idClientes` INT NOT NULL,
+  `UUidFel_venta` VARCHAR(45) NOT NULL,
+  `serieFel_venta` VARCHAR(45) NOT NULL,
+  `NumeroFel_venta` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Pk_idVenta`, `codigo_almacen`),
   CONSTRAINT `idcliente_v`
     FOREIGN KEY (`Pk_idClientes`)
