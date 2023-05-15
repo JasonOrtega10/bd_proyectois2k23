@@ -50,7 +50,6 @@ INSERT INTO `tbl_aplicaciones` VALUES
 ('4000', 'MDI CxC', 'PARA CxC', '1'),
 ('4001', 'Mant. Moneda', 'PARA CxC', '1'),
 ('4002', 'Mant. Tipo Pago', 'PARA CxC', '1'),
-('4003', 'Mant. Concepto por cobrar', 'PARA CxC', '1'),
 ('4101', 'Pcs. Balance de clientes', 'PARA CxC', '1'),
 ('4201', 'Rep. Historial de cliente', 'PARA CxC', '1'),
 ('4202', 'Rep. Moviminetos', 'PARA CxC', '1'),
@@ -125,7 +124,6 @@ INSERT INTO `tbl_asignacionmoduloaplicacion` VALUES
 ('4000', '4000'),
 ('4000', '4001'),
 ('4000', '4002'),
-('4000', '4003'),
 ('4000', '4101'),
 ('4000', '4201'),
 ('4000', '4202'),
@@ -181,7 +179,6 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('1', '4000', '1', '1', '1', '1', '1'),
 ('1', '4001', '1', '1', '1', '1', '1'),
 ('1', '4002', '1', '1', '1', '1', '1'),
-('1', '4003', '1', '1', '1', '1', '1'),
 ('1', '4101', '1', '1', '1', '1', '1'),
 ('1', '4201', '1', '1', '1', '1', '1'),
 ('1', '4202', '1', '1', '1', '1', '1'),
@@ -233,7 +230,6 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('5', '4000', '1', '1', '1', '1', '1'),
 ('5', '4001', '1', '1', '1', '1', '1'),
 ('5', '4002', '1', '1', '1', '1', '1'),
-('5', '4003', '1', '1', '1', '1', '1'),
 ('5', '4101', '1', '1', '1', '1', '1'),
 ('5', '4201', '1', '1', '1', '1', '1'),
 ('5', '4202', '1', '1', '1', '1', '1'),
@@ -258,3 +254,19 @@ INSERT INTO `tbl_asignacionesPerfilsUsuario` VALUES
 ('5', '5'),
 ('6', '6')
 ; 
+
+-- ----------Cuentas por Cobrar----------
+INSERT INTO `tbl_moneda` (`pk_id_moneda`, `nombre_moneda`, `simbolo_moneda`, `cambio_moneda`, `estado_moneda`) VALUES 
+('1', 'Quetzal', 'Q', '1', '1'), 
+('2', 'Dolar', '$', '7.72', '1'), 
+('3', 'Peso Mexicano', '$MX', '0.36', '1');
+
+INSERT INTO `tbl_tipopago` (`pk_id_tipopago`, `nombre_tipopago`, `estado_tipopago`) VALUES 
+('1', 'Efectivo', '1'), 
+('2', 'Tarjeta Credito', '1'), 
+('3', 'Tarjeta Debito', '1'), 
+('4', 'Paypal', '0');
+
+INSERT INTO `tbl_conceptocuentaporcobrar` (`pk_id_concepto_cxc`, `descripcion_concepto_cxc`, `tipoconcepto_concepto_cxc`, `estado_concepto_cxc`) VALUES 
+('1', 'Cobro de factura', '1', '0');
+
