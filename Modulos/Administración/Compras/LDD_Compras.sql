@@ -24,15 +24,17 @@ DROP TABLE IF EXISTS `tbl_detalle_compra`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tbl_detalle_compra` (
   `pk_id_detalle_compra` int NOT NULL,
+  `codigo_almacen` int,
   `fk_id_compra` int DEFAULT NULL,
   `fk_id_listado_productos` int DEFAULT NULL,
   `cantidad_detalle_compra` int DEFAULT NULL,
-  `precio_unitario` int DEFAULT NULL,
-  PRIMARY KEY (`pk_id_detalle_compra`),
+  `costo_unitario` int DEFAULT NULL,
+  PRIMARY KEY (`pk_id_detalle_compra`, `codigo_almacen`),
   KEY `fk_id_compra_detalle_compra_idx` (`fk_id_compra`),
   KEY `fk_id_productos_detalle_compra_idx` (`fk_id_listado_productos`),
   CONSTRAINT `fk_id_compra_detalle_compra` FOREIGN KEY (`fk_id_compra`) REFERENCES `tbl_compra` (`pk_id_compra`),
-  CONSTRAINT `fk_id_productos_detalle_compra` FOREIGN KEY (`fk_id_listado_productos`) REFERENCES `tbl_listado_productos` (`pk_id_listado_productos`)
+  CONSTRAINT `fk_id_productos_detalle_compra` FOREIGN KEY (`fk_id_listado_productos`) REFERENCES `tbl_listado_productos` (`pk_id_listado_productos`),
+  FOREIGN KEY (`codigo_almacen`) REFERENCES `tbl_almacen`(`codigo_almacen`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -43,15 +45,17 @@ DROP TABLE IF EXISTS `tbl_detalle_orden_compra`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tbl_detalle_orden_compra` (
   `pk_id_detalle_orden_compra` int NOT NULL,
+  `codigo_almacen` int,
   `fk_id_orden_compra` int DEFAULT NULL,
   `fk_id_listado_productos` int DEFAULT NULL,
   `cantidad_detalle_orden_compra` int DEFAULT NULL,
-  `precio_unitario` int DEFAULT NULL,
-  PRIMARY KEY (`pk_id_detalle_orden_compra`),
+  `costo_unitario` int DEFAULT NULL,
+  PRIMARY KEY (`pk_id_detalle_orden_compra`, `codigo_almacen`),
   KEY `fk_id_orden_compra_detalle_orden_idx` (`fk_id_orden_compra`),
   KEY `fk_id_productos_detalle_orden_idx` (`fk_id_listado_productos`),
   CONSTRAINT `fk_id_orden_compra_detalle_orden` FOREIGN KEY (`fk_id_orden_compra`) REFERENCES `tbl_orden_compra` (`pk_id_orden_compra`),
-  CONSTRAINT `fk_id_productos_detalle_orden` FOREIGN KEY (`fk_id_listado_productos`) REFERENCES `tbl_listado_productos` (`pk_id_listado_productos`)
+  CONSTRAINT `fk_id_productos_detalle_orden` FOREIGN KEY (`fk_id_listado_productos`) REFERENCES `tbl_listado_productos` (`pk_id_listado_productos`),
+  FOREIGN KEY (`codigo_almacen`) REFERENCES `tbl_almacen`(`codigo_almacen`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -64,7 +68,7 @@ CREATE TABLE `tbl_listado_productos` (
   `pk_id_listado_productos` int NOT NULL,
   `nombre_listado_productos` varchar(45) DEFAULT NULL,
   `marca_listado_productos` varchar(45) DEFAULT NULL,
-  `precio_unitario_listado_productos` float DEFAULT NULL,
+  `costo_unitario_listado_productos` float DEFAULT NULL,
   PRIMARY KEY (`pk_id_listado_productos`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -76,6 +80,7 @@ DROP TABLE IF EXISTS `tbl_orden_compra`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tbl_orden_compra` (
   `pk_id_orden_compra` int NOT NULL,
+  `codigo_almacen` int,
   `fk_id_proveedor` int DEFAULT NULL,
   `fecha_creacion_orden_compra` varchar(45) DEFAULT NULL,
   `prioridad_orden_compra` varchar(45) DEFAULT NULL,
@@ -83,27 +88,9 @@ CREATE TABLE `tbl_orden_compra` (
   `fecha_entre_orden_compra` varchar(45) DEFAULT NULL,
   `total_orden_compra` float DEFAULT NULL,
   `estatus_orden_compra` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`pk_id_orden_compra`),
+  PRIMARY KEY (`pk_id_orden_compra`, `codigo_almacen`),
   KEY `fk_id_proveedor_compra_idx` (`fk_id_proveedor`),
-  CONSTRAINT `fk_id_proveedor_compra` FOREIGN KEY (`fk_id_proveedor`) REFERENCES `tbl_proveedor` (`pk_id_proveedor`)
+  CONSTRAINT `fk_id_proveedor_compra` FOREIGN KEY (`fk_id_proveedor`) REFERENCES `tbl_proveedor` (`pk_id_proveedor`),
+  FOREIGN KEY (`codigo_almacen`) REFERENCES `tbl_almacen`(`codigo_almacen`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
-
-
-DROP TABLE IF EXISTS `tbl_proveedor`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tbl_proveedor` (
-  `pk_id_proveedor` int NOT NULL,
-  `nombre_proveedor` varchar(50) DEFAULT NULL,
-  `direccion_proveedor` varchar(50) DEFAULT NULL,
-  `telefono_proveedor` int DEFAULT NULL,
-  `correo_proveedor` varchar(50) DEFAULT NULL,
-  `rubro_proveedor` varchar(100) DEFAULT NULL,
-  `estado_proveedor` tinyint DEFAULT NULL,
-  PRIMARY KEY (`pk_id_proveedor`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-

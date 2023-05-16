@@ -1,4 +1,4 @@
-
+use sig;
 /*--------------------SEGURIDAD---------------*/
 -- -----MODULOS
 
@@ -50,7 +50,6 @@ INSERT INTO `tbl_aplicaciones` VALUES
 ('4000', 'MDI CxC', 'PARA CxC', '1'),
 ('4001', 'Mant. Moneda', 'PARA CxC', '1'),
 ('4002', 'Mant. Tipo Pago', 'PARA CxC', '1'),
-('4003', 'Mant. Concepto por cobrar', 'PARA CxC', '1'),
 ('4101', 'Pcs. Balance de clientes', 'PARA CxC', '1'),
 ('4201', 'Rep. Historial de cliente', 'PARA CxC', '1'),
 ('4202', 'Rep. Moviminetos', 'PARA CxC', '1'),
@@ -125,7 +124,6 @@ INSERT INTO `tbl_asignacionmoduloaplicacion` VALUES
 ('4000', '4000'),
 ('4000', '4001'),
 ('4000', '4002'),
-('4000', '4003'),
 ('4000', '4101'),
 ('4000', '4201'),
 ('4000', '4202'),
@@ -181,7 +179,6 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('1', '4000', '1', '1', '1', '1', '1'),
 ('1', '4001', '1', '1', '1', '1', '1'),
 ('1', '4002', '1', '1', '1', '1', '1'),
-('1', '4003', '1', '1', '1', '1', '1'),
 ('1', '4101', '1', '1', '1', '1', '1'),
 ('1', '4201', '1', '1', '1', '1', '1'),
 ('1', '4202', '1', '1', '1', '1', '1'),
@@ -233,7 +230,6 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('5', '4000', '1', '1', '1', '1', '1'),
 ('5', '4001', '1', '1', '1', '1', '1'),
 ('5', '4002', '1', '1', '1', '1', '1'),
-('5', '4003', '1', '1', '1', '1', '1'),
 ('5', '4101', '1', '1', '1', '1', '1'),
 ('5', '4201', '1', '1', '1', '1', '1'),
 ('5', '4202', '1', '1', '1', '1', '1'),
@@ -258,3 +254,85 @@ INSERT INTO `tbl_asignacionesPerfilsUsuario` VALUES
 ('5', '5'),
 ('6', '6')
 ; 
+
+-- ----------Cuentas por Cobrar----------
+INSERT INTO `tbl_moneda` (`pk_id_moneda`, `nombre_moneda`, `simbolo_moneda`, `cambio_moneda`, `estado_moneda`) VALUES 
+('1', 'Quetzal', 'Q', '1', '1'), 
+('2', 'Dolar', '$', '7.72', '1'), 
+('3', 'Peso Mexicano', '$MX', '0.36', '1');
+
+INSERT INTO `tbl_tipopago` (`pk_id_tipopago`, `nombre_tipopago`, `estado_tipopago`) VALUES 
+('1', 'Efectivo', '1'), 
+('2', 'Tarjeta Credito', '1'), 
+('3', 'Tarjeta Debito', '1'), 
+('4', 'Paypal', '0');
+
+INSERT INTO `tbl_conceptocuentaporcobrar` (`pk_id_concepto_cxc`, `descripcion_concepto_cxc`, `tipoconcepto_concepto_cxc`, `estado_concepto_cxc`) VALUES 
+('1', 'Cobro de factura', '1', '0');
+
+-- ------------------REPORTEADOR-------------------------
+
+-- STORE PROCEDURES
+
+DELIMITER ;;
+/*drop procedure if exists pa_registro_buscarvalor;*/
+CREATE  PROCEDURE `pa_registro_buscarvalor`(
+_valorbuscar varchar (45))
+BEGIN
+select *
+from tbl_regreporteria
+where nombre_archivo like concat('%',_valorbuscar,'%') || aplicacion like concat('%',_valorbuscar,'%');
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE PROCEDURE `pa_registro_eliminarporid`(
+_idregistro int)
+BEGIN
+delete from tbl_regreporteria
+where idregistro = _idregistro;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE  PROCEDURE `pa_registro_ver`()
+BEGIN
+ select *
+    from tbl_regreporteria;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE  PROCEDURE `pa_registro_verporid`(
+_idregistro int)
+BEGIN
+ select*
+    from tbl_regreporteria
+    where idregostrp = _idregistro;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE  PROCEDURE `pa_reporteria_agregareditar`(
+_idregistro int,
+_ruta varchar(500),
+_nombre_archivo varchar(45),
+_aplicacion varchar(45),
+_estado varchar (45)
+)
+BEGIN
+if _idregistro = 0 then
+ insert into tbl_regreporteria (ruta,nombre_archivo,aplicacion,estado)
+    values (_ruta,_nombre_archivo,_aplicacion,_estado);
+else
+ update tbl_regreporteria
+    set
+  ruta = _ruta,
+        nombre_archivo = _nombre_archivo,
+        aplicacion = _aplicacion,
+        estado = _estado
+        where idregistro = _idregistro;
+end if;
+END ;;
+DELIMITER ;
+
