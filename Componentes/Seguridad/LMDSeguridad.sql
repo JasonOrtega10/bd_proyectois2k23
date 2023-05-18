@@ -4,7 +4,8 @@ INSERT INTO `tbl_modulos` VALUES
 ('2000', 'VENTAS', 'ventas', 1),
 ('3000', 'COMPRAS', 'compras', 1),
 ('4000', 'CxC', 'CxC', 1),
-('5000', 'CxP', 'CxP', 1)
+('5000', 'CxP', 'CxP', 1),
+('6000', 'INVENTARIO', 'inventario', 1)
 ;
 
 -- -----APLICACIONES
@@ -59,7 +60,12 @@ INSERT INTO `tbl_aplicaciones` VALUES
 ('5102', 'Pcs. Balance Saldos', 'PARA CxP', '1'),
 ('5103', 'Pcs. Ingreso Factura', 'PARA CxP', '1'),
 ('5201', 'Rep. Movimineto por pagar', 'PARA CxP', '1'),
-('5202', 'Rep. Antiguedad de saldos', 'PARA CxP', '1')
+('5202', 'Rep. Antiguedad de saldos', 'PARA CxP', '1'),
+('6000', 'MDI Inventario', 'PARA INVETARIO', '1'),
+('6001', 'Mant. Producto', 'PARA INVETARIO', '1'),
+('6002', 'Mant. Linea', 'PARA INVETARIO', '1'),
+('6003', 'Mant. Marca', 'PARA INVETARIO', '1'),
+('6004', 'Mant. Almacen', 'PARA INVETARIO', '1')
 ;
 
 -- -----USUARIOS
@@ -69,7 +75,8 @@ INSERT INTO `tbl_usuarios` VALUES
 ('3', 'ventas', 'ventas', 'ventas', 'X9yc1/l1b2A=', 'ventas@gmail.com', '1', 'COLOR FAVORITO', 'X9yc1/l1b2A='),
 ('4', 'compras', 'compras', 'compras', 'X9yc1/l1b2A=', 'compras@gmail.com', '1', 'COLOR FAVORITO', 'X9yc1/l1b2A='),
 ('5', 'cxc', 'cxc', 'cxc', 'X9yc1/l1b2A=', 'cxc@gmail.com', '1', 'COLOR FAVORITO', 'X9yc1/l1b2A='),
-('6', 'cxp', 'cxp', 'cxp', 'X9yc1/l1b2A=', 'cxp@gmail.com', '1', 'COLOR FAVORITO', 'X9yc1/l1b2A=')
+('6', 'cxp', 'cxp', 'cxp', 'X9yc1/l1b2A=', 'cxp@gmail.com', '1', 'COLOR FAVORITO', 'X9yc1/l1b2A='),
+('7', 'inventario', 'inventario', 'inventario', 'X9yc1/l1b2A=', 'inventario@gmail.com', '1', 'COLOR FAVORITO', 'X9yc1/l1b2A=')
 ;
 
 -- -----PERFILES
@@ -79,7 +86,8 @@ INSERT INTO `tbl_perfiles` VALUES
 ('3', 'VENTAS', 'contiene todos los permisos de ventas', 1),
 ('4', 'COMPRAS', 'contiene todos los permisos de compras', 1),
 ('5', 'CxC', 'contiene todos los permisos de CxC', 1),
-('6', 'CxP', 'contiene todos los permisos de CxP', 1)
+('6', 'CxP', 'contiene todos los permisos de CxP', 1),
+('7', 'INVENTARIO', 'contiene todos los permisos de Inventario', 1)
 ;
 
 -- -----ASIGNACIÓNES MODULO A APLICACION
@@ -133,7 +141,12 @@ INSERT INTO `tbl_asignacionmoduloaplicacion` VALUES
 ('5000', '5102'),
 ('5000', '5103'),
 ('5000', '5201'),
-('5000', '5202')
+('5000', '5202'),
+('6000', '6000'),
+('6000', '6001'),
+('6000', '6002'),
+('6000', '6003'),
+('6000', '6004')
 ;
 
 -- -----PERMISOS DE APLICACIONES A PERFILES
@@ -189,6 +202,11 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('1', '5103', '1', '1', '1', '1', '1'),
 ('1', '5201', '1', '1', '1', '1', '1'),
 ('1', '5202', '1', '1', '1', '1', '1'),
+('1', '6000', '1', '1', '1', '1', '1'),
+('1', '6001', '1', '1', '1', '1', '1'),
+('1', '6002', '1', '1', '1', '1', '1'),
+('1', '6003', '1', '1', '1', '1', '1'),
+('1', '6004', '1', '1', '1', '1', '1'),
 ('2', '1000', '1', '1', '1', '1', '1'),
 ('2', '1001', '1', '1', '1', '1', '1'),
 ('2', '1002', '1', '1', '1', '1', '1'),
@@ -239,7 +257,12 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('6', '5102', '1', '1', '1', '1', '1'),
 ('6', '5103', '1', '1', '1', '1', '1'),
 ('6', '5201', '1', '1', '1', '1', '1'),
-('6', '5202', '1', '1', '1', '1', '1')
+('6', '5202', '1', '1', '1', '1', '1'),
+('7', '6000', '1', '1', '1', '1', '1'),
+('7', '6001', '1', '1', '1', '1', '1'),
+('7', '6002', '1', '1', '1', '1', '1'),
+('7', '6003', '1', '1', '1', '1', '1'),
+('7', '6004', '1', '1', '1', '1', '1')
 ;
 
 -- -----ASIGNACIÓN DE PERFIL A USUARIO
@@ -249,6 +272,7 @@ INSERT INTO `tbl_asignacionesPerfilsUsuario` VALUES
 ('3', '3'),
 ('4', '4'),
 ('5', '5'),
-('6', '6')
+('6', '6'),
+('7', '7')
 ; 
 
