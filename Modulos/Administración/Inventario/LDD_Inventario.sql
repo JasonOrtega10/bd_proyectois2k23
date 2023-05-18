@@ -40,7 +40,7 @@ CREATE TABLE tbl_existencia
     fk_codigo_almacen int,
     fk_codigo_producto int,
     saldo_existencia FLOAT(10,2),
-    PRIMARY KEY (codigo_almacen, codigo_producto),
-	FOREIGN KEY (fk__codigo_almacen) REFERENCES tbl_almacen(pk_codigo_almacen),
-    FOREIGN KEY (fk__codigo_producto) REFERENCES tbl_producto(pk_codigo_producto)
+    PRIMARY KEY (fk_codigo_almacen, fk_codigo_producto),
+	FOREIGN KEY (fk_codigo_almacen) REFERENCES tbl_almacen(pk_codigo_almacen),
+    FOREIGN KEY (fk_codigo_producto) REFERENCES tbl_producto(pk_codigo_producto)
 ) ENGINE=INNODB DEFAULT CHARSET=latin1
