@@ -41,7 +41,7 @@ CREATE TABLE tbl_regreporteria (
   aplicacion varchar(45) NOT NULL,
   estado varchar(45) NOT NULL,
   PRIMARY KEY (idregistro)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB;
 
 /*-----------Seguridad-----------*/
 
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS tbl_bitacoraDeEventos (
 
 -- vistas Seguridad------------------------------------------------------------------------
 CREATE 
-VIEW colchoneria.vista_aplicacion_perfil AS 
+VIEW sig.vista_aplicacion_perfil AS 
     SELECT 
         b.fk_id_perfil AS ID,
         a.nombre_perfil AS Perfil,
@@ -161,11 +161,11 @@ VIEW colchoneria.vista_aplicacion_perfil AS
         b.buscar_permiso AS Buscar,
         b.imprimir_permiso AS Reporte
     FROM
-        (colchoneria.tbl_permisosaplicacionperfil b
-        JOIN colchoneria.tbl_perfiles a ON ((a.pk_id_perfil = b.fk_id_perfil)));
+        (sig.tbl_permisosaplicacionperfil b
+        JOIN sig.tbl_perfiles a ON ((a.pk_id_perfil = b.fk_id_perfil)));
         
 CREATE 
-VIEW colchoneria.vista_aplicacionusuario AS
+VIEW sig.vista_aplicacionusuario AS
     SELECT 
         b.fk_id_aplicacion AS Aplicacion,
         b.fk_id_usuario AS ID,
@@ -176,11 +176,11 @@ VIEW colchoneria.vista_aplicacionusuario AS
         b.buscar_permiso AS Buscar,
         b.imprimir_permiso AS Reporte
     FROM
-        (colchoneria.tbl_permisosaplicacionesusuario b
-        JOIN colchoneria.tbl_usuarios a ON ((a.pk_id_usuario = b.fk_id_usuario)));
+        (sig.tbl_permisosaplicacionesusuario b
+        JOIN sig.tbl_usuarios a ON ((a.pk_id_usuario = b.fk_id_usuario)));
         
 CREATE 
-VIEW colchoneria.vista_modulo_aplicacion AS
+VIEW sig.vista_modulo_aplicacion AS
     SELECT 
         b.fk_id_modulos AS ID,
         a.nombre_modulo AS Modulo,
@@ -188,12 +188,12 @@ VIEW colchoneria.vista_modulo_aplicacion AS
         c.nombre_aplicacion AS Nombre,
         c.descripcion_aplicacion AS Descripcion
     FROM
-        ((colchoneria.tbl_asignacionmoduloaplicacion b
-        JOIN colchoneria.tbl_modulos a ON ((a.pk_id_modulos = b.fk_id_modulos)))
-        JOIN colchoneria.tbl_aplicaciones c ON ((c.pk_id_aplicacion = b.fk_id_aplicacion)));
+        ((sig.tbl_asignacionmoduloaplicacion b
+        JOIN sig.tbl_modulos a ON ((a.pk_id_modulos = b.fk_id_modulos)))
+        JOIN sig.tbl_aplicaciones c ON ((c.pk_id_aplicacion = b.fk_id_aplicacion)));
         
 CREATE 
-VIEW colchoneria.vista_perfil_usuario AS
+VIEW sig.vista_perfil_usuario AS
     SELECT 
         b.fk_id_usuario AS ID,
         a.nombre_usuario AS Usuario,
@@ -201,9 +201,9 @@ VIEW colchoneria.vista_perfil_usuario AS
         b.fk_id_perfil AS perfil,
         c.nombre_perfil AS Nombre
     FROM
-        ((colchoneria.tbl_asignacionesperfilsusuario b
-        JOIN colchoneria.tbl_usuarios a ON ((a.pk_id_usuario = b.fk_id_usuario)))
-        JOIN colchoneria.tbl_perfiles c ON ((c.pk_id_perfil = b.fk_id_perfil)));
+        ((sig.tbl_asignacionesperfilsusuario b
+        JOIN sig.tbl_usuarios a ON ((a.pk_id_usuario = b.fk_id_usuario)))
+        JOIN sig.tbl_perfiles c ON ((c.pk_id_perfil = b.fk_id_perfil)));
 
 /*------------------Almacen/Inventario-------------*/
 DROP TABLE IF EXISTS tbl_almacen;
@@ -302,7 +302,7 @@ CREATE TABLE tbl_listado_productos (
   marca_listado_productos varchar(45) DEFAULT NULL,
   costo_unitario_listado_productos float DEFAULT NULL,
   PRIMARY KEY (pk_id_listado_productos)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 CREATE TABLE tbl_compra (
   pk_id_compra int NOT NULL,
@@ -321,7 +321,7 @@ KEY fkidtipopago_compra_idx (fk_id_tipopago),
 CONSTRAINT fkidproveedor_compra FOREIGN KEY (fk_id_proveedor) REFERENCES tbl_proveedor (pk_id_proveedor),
 CONSTRAINT fkidtipopago_compra FOREIGN KEY (fk_id_tipopago) REFERENCES tbl_TipoPago (pk_id_tipopago),
 FOREIGN KEY (fk_codigo_almacen) REFERENCES tbl_almacen(pk_codigo_almacen)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 
 DROP TABLE IF EXISTS tbl_detalle_compra;
@@ -338,7 +338,7 @@ CREATE TABLE tbl_detalle_compra (
   CONSTRAINT fk_id_compra_detalle_compra FOREIGN KEY (fk_id_compra) REFERENCES tbl_compra (pk_id_compra),
   CONSTRAINT fk_id_productos_detalle_compra FOREIGN KEY (fk_id_listado_productos) REFERENCES tbl_listado_productos (pk_id_listado_productos),
   FOREIGN KEY (fk_codigo_almacen) REFERENCES tbl_almacen(pk_codigo_almacen)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 
 DROP TABLE IF EXISTS tbl_orden_compra;
@@ -356,7 +356,7 @@ CREATE TABLE tbl_orden_compra (
   KEY fk_id_proveedor_compra_idx (fk_id_proveedor),
   CONSTRAINT fk_id_proveedor_compra FOREIGN KEY (fk_id_proveedor) REFERENCES tbl_proveedor (pk_id_proveedor),
   FOREIGN KEY (fk_codigo_almacen) REFERENCES tbl_almacen(pk_codigo_almacen)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 DROP TABLE IF EXISTS tbl_detalle_orden_compra;
 CREATE TABLE tbl_detalle_orden_compra (
@@ -372,7 +372,7 @@ CREATE TABLE tbl_detalle_orden_compra (
   CONSTRAINT fk_id_orden_compra_detalle_orden FOREIGN KEY (fk_id_orden_compra) REFERENCES tbl_orden_compra (pk_id_orden_compra),
   CONSTRAINT fk_id_productos_detalle_orden FOREIGN KEY (fk_id_listado_productos) REFERENCES tbl_listado_productos (pk_id_listado_productos),
   FOREIGN KEY (fk_codigo_almacen) REFERENCES tbl_almacen(pk_codigo_almacen)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 
 /*----------------Cuenta Por Pagar----------------*/

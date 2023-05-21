@@ -263,7 +263,17 @@ INSERT INTO `tbl_asignacionesPerfilsUsuario` VALUES
 ('6', '6')
 ; 
 
--- ----------Cuentas por Cobrar----------
+-- ----------Reportes----------
+insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\ReportMoneda.rpt','Moneda','4001','visible');
+insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\ReportTipoPago.rpt','Tipo de Pago','4002','visible');
+insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\ReportConceptoCxC.rpt','Concepto de Cobro','4003','visible');
+insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\EstadoCuenta.rpt','Estado de Cuenta','4201','visible');
+
+INSERT INTO `tbl_almacen` (`pk_codigo_almacen`, `nombre_almacen`, `estatus_almacen`) VALUES 
+('1', 'la bendición', '1'),
+('2', 'la comunidad', '1'),(
+'3', 'la soledad', '1');
+
 INSERT INTO `tbl_moneda` (`pk_id_moneda`, `nombre_moneda`, `simbolo_moneda`, `cambio_moneda`, `estado_moneda`) VALUES 
 ('1', 'Quetzal', 'Q', '1', '1'), 
 ('2', 'Dolar', '$', '7.72', '1'), 
@@ -272,8 +282,13 @@ INSERT INTO `tbl_moneda` (`pk_id_moneda`, `nombre_moneda`, `simbolo_moneda`, `ca
 INSERT INTO `tbl_tipopago` (`pk_id_tipopago`, `nombre_tipopago`, `estado_tipopago`) VALUES 
 ('1', 'Efectivo', '1'), 
 ('2', 'Tarjeta Credito', '1'), 
-('3', 'Tarjeta Debito', '1'), 
-('4', 'Paypal', '0');
+('3', 'Tarjeta Debito', '1');
+
+INSERT INTO `tbl_estados` (`Pk_id_estados`, `Descripcion_estados`, `restriccion_estados`) VALUES ('1', 'activo', '1');
+INSERT INTO `tbl_vendedores` (`Pk_idVendedores`, `Dpi_vendedores`, `Nombres_vendedores`, `Apellidos_vendedores`, `Pk_id_estados`, `nit_vendedores`, `edad_vendedores`) VALUES ('1', '123456789', 'juan', 'perez', '1', '123456789', '18');
+INSERT INTO `tbl_clientes` (`Pk_idClientes`, `Dpi_clientes`, `Nombres_clientes`, `Apellidos_clientes`, `FechaNac_clientes`, `nit_clientes`, `Pk_id_estados`, `direccion_clientes`, `telefono_clientes`, `Pk_idVendedores`, `SMesAnterior_clientes`, `SActual_clientes`, `CargoMes_clientes`, `AbonosMes_clientes`, `CargosAcumulados_clientes`, `AbonosAcumulados_clientes`) VALUES ('1', '123456788', 'juan', 'lee', '2001-05-01', '12345678', '1', 'Guatemala', '12345678', '1', '0', '0', '1000', '0', '0', '0');
+INSERT INTO `tbl_venta` (`Pk_idVenta`, `codigo_almacen`, `fecha_venta`, `Descuento_venta`, `IVA_venta`, `Total_venta`, `Estado_fac_venta`, `fecha_venci_venta`, `moneda_venta`, `Pk_idClientes`, `UUidFel_venta`, `serieFel_venta`, `NumeroFel_venta`) VALUES ('1', '1', '2023-05-19 13:21:19', '0', '0', '1000', '1', '2025-05-19', '1', '1', '1', '1', '1');
+
 
 INSERT INTO `tbl_conceptocuentaporcobrar` (`pk_id_concepto_cxc`, `descripcion_concepto_cxc`, `tipoconcepto_concepto_cxc`, `estado_concepto_cxc`) VALUES 
-('1', 'Cobro de factura', '1', '0');
+('1', 'Cobro de factura', '1', '1');
