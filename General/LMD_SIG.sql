@@ -54,8 +54,9 @@ INSERT INTO `tbl_aplicaciones` VALUES
 ('4003', 'Mant. Concepto por Cobrar', 'PARA CxC', '1'),
 ('4101', 'Pcs. Pago de cliente', 'PARA CxC', '1'),
 ('4102', 'Pcs. Balance General de Cliente', 'PARA CxC', '1'),
-('4201', 'Rep. Historial de cliente', 'PARA CxC', '1'),
-('4202', 'Rep. Moviminetos', 'PARA CxC', '1'),
+('4201', 'Rep. Estado de Cuenta', 'PARA CxC', '1'),
+('4202', 'Rep. Estado de Cuenta Cardex', 'PARA CxC', '1'),
+('4203', 'Rep. Balance de clientes', 'PARA CxC', '1'),
 ('5000', 'MDI CxP', 'PARA CxP', '1'),
 ('5001', 'Mant. Proveedor', 'PARA CxP', '1'),
 ('5002', 'Mant. Moneda', 'PARA CxP', '1'),
@@ -140,6 +141,7 @@ INSERT INTO `tbl_asignacionmoduloaplicacion` VALUES
 ('4000', '4102'),
 ('4000', '4201'),
 ('4000', '4202'),
+('4000', '4203'),
 ('5000', '5000'),
 ('5000', '5001'),
 ('5000', '5002'),
@@ -203,6 +205,7 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('1', '4102', '1', '1', '1', '1', '1'),
 ('1', '4201', '1', '1', '1', '1', '1'),
 ('1', '4202', '1', '1', '1', '1', '1'),
+('1', '4203', '1', '1', '1', '1', '1'),
 ('1', '5000', '1', '1', '1', '1', '1'),
 ('1', '5001', '1', '1', '1', '1', '1'),
 ('1', '5002', '1', '1', '1', '1', '1'),
@@ -262,6 +265,7 @@ INSERT INTO `tbl_permisosAplicacionPerfil` VALUES
 ('5', '4102', '1', '1', '1', '1', '1'),
 ('5', '4201', '1', '1', '1', '1', '1'),
 ('5', '4202', '1', '1', '1', '1', '1'),
+('5', '4203', '1', '1', '1', '1', '1'),
 ('6', '5000', '1', '1', '1', '1', '1'),
 ('6', '5001', '1', '1', '1', '1', '1'),
 ('6', '5002', '1', '1', '1', '1', '1'),
@@ -291,11 +295,13 @@ INSERT INTO `tbl_asignacionesPerfilsUsuario` VALUES
 ('7', '7')
 ; 
 
--- ----------Reportes----------
+-- ----------Reportes CxC----------
 insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\ReportMoneda.rpt','Moneda','4001','visible');
 insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\ReportTipoPago.rpt','Tipo de Pago','4002','visible');
 insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\ReportConceptoCxC.rpt','Concepto de Cobro','4003','visible');
 insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\EstadoCuenta.rpt','Estado de Cuenta','4201','visible');
+insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\EstadoCuentaCardex.rpt','Estado de CuentaCardex','4202','visible');
+insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxC\\BalanceDeClientes.rpt','Estado de CuentaCardex','4203','visible');
 
 -- --------------Reportes CxP------------
 insert into tbl_regreporteria(ruta, nombre_archivo, aplicacion, estado) values ('Modulos\\CxP\\ReporteProveedor.rpt','ReporteProveedor','5001','visible');
@@ -323,8 +329,8 @@ INSERT INTO `tbl_tipopago` (`pk_id_tipopago`, `nombre_tipopago`, `estado_tipopag
 
 INSERT INTO `tbl_estados` (`Pk_id_estados`, `Descripcion_estados`, `restriccion_estados`) VALUES ('1', 'activo', '1');
 INSERT INTO `tbl_vendedores` (`Pk_idVendedores`, `Dpi_vendedores`, `Nombres_vendedores`, `Apellidos_vendedores`, `Pk_id_estados`, `nit_vendedores`, `edad_vendedores`) VALUES ('1', '123456789', 'juan', 'perez', '1', '123456789', '18');
-INSERT INTO `tbl_clientes` (`Pk_idClientes`, `Dpi_clientes`, `Nombres_clientes`, `Apellidos_clientes`, `FechaNac_clientes`, `nit_clientes`, `Pk_id_estados`, `direccion_clientes`, `telefono_clientes`, `Pk_idVendedores`, `SMesAnterior_clientes`, `SActual_clientes`, `CargoMes_clientes`, `AbonosMes_clientes`, `CargosAcumulados_clientes`, `AbonosAcumulados_clientes`) VALUES ('1', '123456788', 'juan', 'lee', '2001-05-01', '12345678', '1', 'Guatemala', '12345678', '1', '0', '0', '1000', '0', '0', '0');
-INSERT INTO `tbl_venta` (`Pk_idVenta`, `codigo_almacen`, `fecha_venta`, `Descuento_venta`, `IVA_venta`, `Total_venta`, `Estado_fac_venta`, `fecha_venci_venta`, `moneda_venta`, `Pk_idClientes`, `UUidFel_venta`, `serieFel_venta`, `NumeroFel_venta`) VALUES ('1', '1', '2023-05-19 13:21:19', '0', '0', '1000', '1', '2025-05-19', '1', '1', '1', '1', '1');
+INSERT INTO `tbl_clientes` (`Pk_idClientes`, `Dpi_clientes`, `Nombres_clientes`, `Apellidos_clientes`, `FechaNac_clientes`, `nit_clientes`, `Pk_id_estados`, `direccion_clientes`, `telefono_clientes`, `Pk_idVendedores`, `SMesAnterior_clientes`, `SActual_clientes`, `CargoMes_clientes`, `AbonosMes_clientes`, `CargosAcumulados_clientes`, `AbonosAcumulados_clientes`) VALUES ('1', '123456788', 'juan', 'lee', '2001-05-01', '12345678', '1', 'Guatemala', '12345678', '1', '0', '1000', '1000', '0', '0', '0');
+INSERT INTO `tbl_venta` (`Pk_idVenta`, `codigo_almacen`, `fecha_venta`, `Descuento_venta`, `IVA_venta`, `Total_venta`, `Estado_fac_venta`, `fecha_venci_venta`, `moneda_venta`, `Pk_idClientes`, `UUidFel_venta`, `serieFel_venta`, `NumeroFel_venta`) VALUES ('1', '1', '2023-05-19 13:21:19', '0', '0', '1000', '1', '2023-08-19', '1', '1', '1', '1', '1');
 
 
 INSERT INTO `tbl_conceptocuentaporcobrar` (`pk_id_concepto_cxc`, `descripcion_concepto_cxc`, `tipoconcepto_concepto_cxc`, `estado_concepto_cxc`) VALUES 
