@@ -245,6 +245,8 @@ CREATE TABLE tbl_producto
     fechaultentrada_marca VARCHAR(60),
     fechaultsalida_marca VARCHAR(60),
     estatus_producto VARCHAR(1),
+    fecha_aprox_ingreso VARCHAR(45),
+    productos_por_ingresar VARCHAR(45),
     FOREIGN KEY (fk_codigo_linea) REFERENCES tbl_linea(pk_codigo_linea),
     FOREIGN KEY (fk_codigo_marca) REFERENCES tbl_marca(pk_codigo_marca)
 ) ENGINE=INNODB DEFAULT CHARSET=latin1;
@@ -332,6 +334,7 @@ CREATE TABLE tbl_detalle_compra (
   fk_id_listado_productos int DEFAULT NULL,
   cantidad_detalle_compra int DEFAULT NULL,
   costo_unitario int DEFAULT NULL,
+  total_detalle_compra float,
   PRIMARY KEY (pk_id_detalle_compra, fk_codigo_almacen),
   KEY fk_id_compra_detalle_compra_idx (fk_id_compra),
   KEY fk_id_productos_detalle_compra_idx (fk_id_listado_productos),
@@ -366,6 +369,7 @@ CREATE TABLE tbl_detalle_orden_compra (
   fk_id_listado_productos int DEFAULT NULL,
   cantidad_detalle_orden_compra int DEFAULT NULL,
   costo_unitario int DEFAULT NULL,
+  total_detalle_orden_compra float,
   PRIMARY KEY (pk_id_detalle_orden_compra, fk_codigo_almacen),
   KEY fk_id_orden_compra_detalle_orden_idx (fk_id_orden_compra),
   KEY fk_id_productos_detalle_orden_idx (fk_id_listado_productos),
