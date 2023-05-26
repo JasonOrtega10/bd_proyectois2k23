@@ -53,6 +53,7 @@ CREATE TABLE `tbl_factura` (
   pk_id_almacen INT not null,
   pk_id_proveedor INT not null,
   fecha_emision_factura DATE not null,
+  fecha_vencimiento_factura DATE not null,
   total_factura float DEFAULT NULL,
   estatus_factura tinyint(1) DEFAULT NULL,
   PRIMARY KEY (pk_id_factura,pk_id_almacen,pk_id_proveedor),
