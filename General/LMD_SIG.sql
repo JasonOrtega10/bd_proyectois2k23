@@ -335,3 +335,6 @@ INSERT INTO `tbl_venta` (`Pk_idVenta`, `codigo_almacen`, `fecha_venta`, `Descuen
 
 INSERT INTO `tbl_conceptocuentaporcobrar` (`pk_id_concepto_cxc`, `descripcion_concepto_cxc`, `tipoconcepto_concepto_cxc`, `estado_concepto_cxc`) VALUES 
 ('1', 'Cobro de factura', '1', '1');
+
+INSERT INTO `sig`.`tbl_conceptocuentaporpagar` (`pk_id_conceptocuentaporpagar`, `descripcion_conceptocuentaporpagar`, `tipoconcepto_conceptocuentaporpagar`, `estado_conceptocuentaporpagar`) VALUES ('1', 'pago', 'abono', '1');
+INSERT INTO `sig`.`tbl_conceptocuentaporpagar` (`pk_id_conceptocuentaporpagar`, `descripcion_conceptocuentaporpagar`, `tipoconcepto_conceptocuentaporpagar`, `estado_conceptocuentaporpagar`) VALUES ('2', 'devolucion', 'cargo', '1');
